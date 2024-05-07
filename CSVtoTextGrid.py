@@ -41,7 +41,7 @@ import textgrid
 
 # Load the CSV data
 with open("C:/Users/eiten9710/OneDrive - OsloMet/Documents/" + \
-        "Github/TextGrid-script/textgrids/response_df.csv",
+        "Github/TextGrid-scripts/textgrids/response_df.csv",
           "r", encoding="utf-8-sig") as f:  # If `utf-8 BOM` encoded
     reader = csv.DictReader(f,
                             delimiter=";"  # If semicolon separated, not comma
@@ -76,6 +76,6 @@ for participant, rows in participants.items():
 
     # Write the TextGrid to a file
     with open("C:/Users/eiten9710/OneDrive - OsloMet/Documents/"
-        "Github/TextGrid-script/textgrids/"
+        "Github/TextGrid-scripts/textgrids/"
         f"{participant}.TextGrid", "w", encoding="utf-8") as f:
         tg.write(f)
