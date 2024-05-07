@@ -94,7 +94,7 @@ if modify_textgrids_enabled:
     def prosodic_word(s):
         if not s:
             return ""
-        return "σ"
+        return "ω"
 
     # Google Translate API for automatic translation of `realization` strings
     translator = Translator()
@@ -275,7 +275,7 @@ if modify_textgrids_enabled:
 
         tg.addTier(translation_tier)
 
-        # Duplicate the `word` tier and create new `prosodic_unit` (`σ`) tier
+        # Duplicate the `word` tier and create new `prosodic_unit` (`ω`) tier
         prosodic_unit_entries = [(start, stop, prosodic_word(label))
                                  for start, stop, label in word_tier.entries]
         prosodic_unit_tier = word_tier.new(name="prosodic unit",
