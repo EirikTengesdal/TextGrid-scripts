@@ -1,4 +1,4 @@
-# TextGrid-scripts for Python
+# *Praat* TextGrid-scripts for Python
 This repository contains Python scripts for generating and modifying [*Praat*](https://www.fon.hum.uva.nl/praat/) `TextGrid` files.
 
 The most elaborate script is `TextGrid_script.py`, which is based on `CSVtoTextGrid.py`.
