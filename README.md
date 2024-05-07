@@ -28,6 +28,8 @@ Please consider citing or acknowledging the repository/code if you have found it
 
 Tengesdal, Eirik. 2024. TextGrid-script [Software]. https://github.com/EirikTengesdal/TextGrid-script
 
+The repository was first published on GitHub 07.05.2024 (DD.MM.YYYY).
+
 ## Licence and copyright
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
