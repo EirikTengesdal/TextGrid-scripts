@@ -111,10 +111,10 @@ if modify_textgrids_enabled:
 # %%% 1.1: Define input and output paths
 if generate_new_textgrids_enabled:
     input_path = "C:/Users/eiten9710/OneDrive - OsloMet/Documents/" + \
-        "Github/Prosodic_Annotation/"
+        "Github/TextGrid-scripts/"
 
     output_path = "C:/Users/eiten9710/OneDrive - OsloMet/Documents/" + \
-        "Github/Prosodic_Annotation/textgrids/"
+        "Github/TextGrid-scripts/textgrids/"
 
     if not os.path.exists(output_path):
         os.mkdir(output_path)
@@ -214,7 +214,7 @@ if generate_new_textgrids_enabled:
 # %%% 2.1: Define input and output paths
 if modify_textgrids_enabled:
     modified_textgrid_input_path = "C:/Users/eiten9710/OneDrive - OsloMet/" + \
-        "Documents/Github/Prosodic_Annotation/fa_textgrids/"
+        "Documents/Github/TextGrid-scripts/fa_textgrids/"
 
     # Define `textgrid_output_path` if different from output_path
     modified_textgrid_output_path = join(modified_textgrid_input_path,
