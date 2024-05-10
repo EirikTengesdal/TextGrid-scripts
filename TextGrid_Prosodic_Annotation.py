@@ -3,6 +3,7 @@
 
 This Python script was adapted 08.05.2024 based on `TextGrid_script.py` to
 modify TextGrids for prosodic annotation.
+Modified 10.05.2024 to include `UniqueNumb` and `Realization` tiers.
 
 File:
     TextGrid_Prosodic_Annotation.py
@@ -68,6 +69,8 @@ Licence:
 import os
 from praatio import textgrid
 from os.path import join
+import pandas as pd
+from collections import namedtuple
 
 # %%% 0.2: Define function
 # Populate `prosodic_unit` tier with `s` when given entries are not `''`
@@ -82,9 +85,16 @@ def prosodic_unit(s):
 
 
 # %%% 1.1: Define input and output paths
+csv_path = "C:/Users/eirik/OneDrive - OsloMet/" + \
+    "Documents/Github/TextGrid-scripts/" + \
+    "NWD_june23.csv"
+
+# Read CSV file with pandas
+df = pd.read_csv(csv_path, encoding="utf-16")
+
 modified_textgrid_input_path = "C:/Users/eirik/OneDrive - OsloMet/" + \
-    "/Documents/Github/" + \
-    "TextGrid-scripts/Prosodic_Annotation/NorwegianTextGrids/"
+    "Documents/Github/TextGrid-scripts/" + \
+    "NorwegianTextGrids/"
 
 # Define `textgrid_output_path` if different from output_path
 modified_textgrid_output_path = join(modified_textgrid_input_path,
@@ -94,6 +104,29 @@ if not os.path.exists(modified_textgrid_output_path):
     print(f"Created directory '{modified_textgrid_output_path}'!")
 
 # %%% 1.2: Populate each TextGrid with new tiers and modify existing ones
+# %%%% 1.2.1: Find all participant IDs based on the TextGrid filenames in the folder
+TextGrid_files_list = [f for f in os.listdir(modified_textgrid_input_path) if f.endswith(".TextGrid")]
+
+participant_list = []
+for textgrid_filename in TextGrid_files_list:
+    participant_id = textgrid_filename.split("_")
+    participant_id = participant_id[0][:-9]
+    participant_list.append(participant_id)
+
+# %%%% 1.2.2: Filter the dataframe based on the participant IDs
+
+# Keep only the df rows where the participant ID is in the `participant_list`
+df = df[df["Informant"].isin(participant_list)]
+# Filter out embedding experiment based on the presence of "emb" suffix in the `SoundMatch` column
+df = df[~df["SoundMatch"].str.contains("emb", na=False)]
+
+#pd.set_option('display.max_columns', None)
+
+# We will use the values in here to populate a new TextGrid tier: UniqueNumb, which coincides with the `Informant` column in the CSV file and additionaly by `Begin.Time...ss.msec` and `End.Time...ss.msec` columns. This way, we can ensure that the correct values are added to the TextGrids.
+df = df[["Informant", "UniqueNumb", "Begin.Time...ss.msec", "End.Time...ss.msec", "Realization"]]
+
+# %%%% 1.2.3: Loop through each TextGrid and modify it
+
 for textgrid_filename in os.listdir(modified_textgrid_input_path):
     ext = os.path.splitext(textgrid_filename)[1]
     if ext != ".TextGrid":
@@ -127,13 +160,40 @@ for textgrid_filename in os.listdir(modified_textgrid_input_path):
     tg.addTier(word_tier)
     tg.addTier(phone_tier)
 
-    # Add remaining tiers
+    # Add emphasis tier
     emphasis_tier = textgrid.PointTier(
         "emphasis (E)", [], minT=0, maxT=tg.maxTimestamp)
-    comment_tier = textgrid.IntervalTier(
-        "comment", [], minT=0, maxT=tg.maxTimestamp)
-
     tg.addTier(emphasis_tier)
+
+    # Add `UniqueNumb` tier
+    uniquenumb_tier = textgrid.IntervalTier(
+        "uniquenumb", [], minT=0, maxT=tg.maxTimestamp)
+
+    # Populate the `UniqueNumb` tier with the `UniqueNumb` values from the CSV file
+    df_filtered = df[df["Informant"] == textgrid_filename[:-9]]
+    for index, row in df_filtered.iterrows():
+        uniquenumb_entry = namedtuple("Interval", ["start", "end", "label"])
+        uniquenumb_entry = uniquenumb_entry(row["Begin.Time...ss.msec"], row["End.Time...ss.msec"], str(row["UniqueNumb"]))
+        uniquenumb_tier.insertEntry(uniquenumb_entry, collisionMode="merge")
+    tg.addTier(uniquenumb_tier)
+
+    # Add `Realization` tier
+    realization_tier = textgrid.IntervalTier(
+        "realization", [], minT=0, maxT=tg.maxTimestamp)
+
+    # Populate the `realization` tier with the `Reailization` values from the CSV file
+    df_filtered = df[df["Informant"] == textgrid_filename[:-9]]
+    for index, row in df_filtered.iterrows():
+        realization_entry = namedtuple("Interval", ["start", "end", "label"])
+        realization_entry = realization_entry(row["Begin.Time...ss.msec"], row["End.Time...ss.msec"], str(row["Realization"]))
+        realization_tier.insertEntry(realization_entry, collisionMode="merge")
+    tg.addTier(realization_tier)
+
+    # Add `comment` tier
+    comment_tier_entries = [(start, stop, "")
+                             for start, stop, label in realization_tier.entries]
+    comment_tier = realization_tier.new(name="comment",
+                                       entries=comment_tier_entries)
     tg.addTier(comment_tier)
 
     # Write the TextGrid to a file (here naming with `audio_filename`)
