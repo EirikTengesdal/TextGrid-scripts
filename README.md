@@ -26,7 +26,7 @@ An adapted version of this script can be relevant to use when you do not require
 ## Citation information
 Please consider citing or acknowledging the repository/code if you have found it useful. For example like this:
 
-Tengesdal, Eirik. 2024. TextGrid-script [Software]. https://github.com/EirikTengesdal/TextGrid-script
+Tengesdal, Eirik. 2024. TextGrid-scripts [Software]. https://github.com/EirikTengesdal/TextGrid-scripts
 
 The repository was first published on GitHub 07.05.2024 (DD.MM.YYYY).
 
